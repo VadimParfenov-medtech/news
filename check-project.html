@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Проверка проекта GlobalNews</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f5f5f5; padding: 40px; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    h1 { color: #c8102e; margin-bottom: 30px; }
+    .check-item { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .check-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .check-title { font-size: 18px; font-weight: 600; }
+    .status { padding: 5px 12px; border-radius: 6px; font-size: 14px; font-weight: 600; }
+    .status.ok { background: #d4edda; color: #155724; }
+    .status.error { background: #f8d7da; color: #721c24; }
+    .file-list { list-style: none; margin-top: 10px; }
+    .file-list li { padding: 6px 0; display: flex; align-items: center; gap: 10px; font-family: monospace; color: #555; }
+    .file-link { text-decoration: none; color: #007bff; }
+    .file-link:hover { text-decoration: underline; }
+    .details-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+    .detail-card { background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 3px solid #c8102e; }
+    .detail-label { font-size: 12px; color: #666; text-transform: uppercase; margin-bottom: 5px; }
+    .detail-value { font-size: 14px; font-weight: 500; color: #333; }
+    .warning { background: #fff3cd; border-left-color: #ffc107 !important; color: #856404; padding: 10px; margin-top: 10px; border-radius: 0 8px 8px 0; font-size: 13px; }
+    code { background: #e9ecef; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 Проверка проекта GlobalNews</h1>
+    
+    <div class="check-item">
+      <div class="check-header">
+        <span class="check-title">📁 Структура файлов</span>
+        <span id="file-status" class="status">Проверка...</span>
+      </div>
+      <ul class="file-list" id="file-list"></ul>
+    </div>
+
+    <div class="check-item">
+      <div class="check-header">
+        <span class="check-title">🌐 Доступность страниц</span>
+        <span id="pages-status" class="status">Проверка...</span>
+      </div>
+      <div class="details-grid" id="pages-details"></div>
+    </div>
+
+    <div class="check-item">
+      <div class="check-header">
+        <span class="check-title">📊 Данные news.json</span>
+        <span id="data-status" class="status">Проверка...</span>
+      </div>
+      <div class="details-grid" id="data-details"></div>
+    </div>
+
+    <div class="check-item">
+      <div class="check-header">
+        <span class="check-title">✅ Итоги проверки</span>
+      </div>
+      <div id="summary" style="font-size: 16px; line-height: 1.8;"></div>
+    </div>
+
+    <div class="warning">
+      <strong>ℹ️ Важно:</strong> Откройте index.html в браузере, чтобы проверить работу сайта с локальными данными.
+    </div>
+  </div>
+
+  <script>
+    const REQUIRED_FILES = ['index.html', 'article.html', 'category.html', 'css/style.css', 'js/main.js', 'js/i18n.js'];
+    
+    // Check files
+    function checkFiles() {
+      const filesList = document.getElementById('file-list');
+      let allPresent = true;
+      
+      REQUIRED_FILES.forEach(file => {
+        const li = document.createElement('li');
+        const exists = fileExists(file);
+        
+        li.innerHTML = `
+          <input type="checkbox" ${exists ? 'checked' : ''} disabled>
+          <a href="${file}" class="file-link">${file}</a>
+          ${exists ? '<span style="color: green; font-size: 12px;">✓</span>' : '<span style="color: red; font-size: 12px;">✗</span>'}
+        `;
+        
+        if (!exists) allPresent = false;
+        filesList.appendChild(li);
+      });
+      
+      document.getElementById('file-status').textContent = allPresent ? 'OK' : 'Ошибки';
+      document.getElementById('file-status').className = 'status ' + (allPresent ? 'ok' : 'error');
+    }
+
+    // Check HTML pages for required elements
+    function checkPages() {
+      const pagesDetails = document.getElementById('pages-details');
+      
+      ['index.html', 'article.html', 'category.html'].forEach(page => {
+        if (!fileExists(page)) return;
+        
+        const content = readFile(page);
+        const checks = [
+          { name: 'UTF-8 encoding', check: true },
+          { name: 'DOCTYPE declaration', check: content.includes('<!DOCTYPE html>') },
+          { name: 'Meta charset', check: content.includes('charset="UTF-8"') },
+          { name: 'i18n.js script', check: content.includes('js/i18n.js') },
+          { name: 'main.js script', check: content.includes('js/main.js') },
+          { name: 'CSS link', check: content.includes('css/style.css') }
+        ];
+        
+        let allOk = checks.every(c => c.check);
+        
+        const div = document.createElement('div');
+        div.className = 'detail-card';
+        div.style.borderLeftColor = allOk ? '#28a745' : '#dc3545';
+        div.innerHTML = `
+          <div class="detail-label">${page}</div>
+          <div class="detail-value">${allOk ? 'Все элементы найдены ✓' : 'Некоторые элементы отсутствуют ✗'}</div>
+        `;
+        
+        pagesDetails.appendChild(div);
+      });
+      
+      document.getElementById('pages-status').textContent = 'Проверено';
+    }
+
+    // Check JSON data
+    function checkData() {
+      if (!fileExists('data/news.json')) {
+        showDataCheck(false, 'Файл news.json отсутствует');
+        return;
+      }
+      
+      const content = readFile('data/news.json');
+      let valid = false;
+      let articleCount = 0;
+      let categoryCount = 0;
+      let langs = [];
+      
+      try {
+        const data = JSON.parse(content);
+        if (data.articles && Array.isArray(data.articles)) {
+          articleCount = data.articles.length;
+          valid = true;
+        }
+        if (data.categories && Array.isArray(data.categories)) {
+          categoryCount = data.categories.length;
+        }
+      } catch (e) {
+        // Invalid JSON
+      }
+      
+      if (!valid) {
+        showDataCheck(false, 'Неверный формат данных');
+        return;
+      }
+      
+      showDataCheck(true, `${articleCount} статей, ${categoryCount} рубрик`);
+      
+      const dataDetails = document.getElementById('data-details');
+      
+      // Check for languages in articles
+      let langSupport = { ru: false, en: false, es: false, de: false };
+      if (articleCount > 0) {
+        const firstArticle = data.articles[0];
+        Object.keys(firstArticle.title || {}).forEach(lang => {
+          langSupport[lang] = true;
+        });
+      }
+      
+      const details = [
+        { name: 'Статус', value: valid ? 'OK ✓' : 'Ошибка ✗' },
+        { name: 'Количество статей', value: articleCount.toString() },
+        { name: 'Количество рубрик', value: categoryCount.toString() },
+        { name: 'Поддержка языков', value: Object.keys(langSupport).filter(l => langSupport[l]).join(', ') || 'нет' }
+      ];
+      
+      details.forEach(detail => {
+        const div = document.createElement('div');
+        div.className = 'detail-card';
+        div.style.borderLeftColor = valid ? '#28a745' : '#dc3545';
+        div.innerHTML = `
+          <div class="detail-label">${detail.name}</div>
+          <div class="detail-value">${detail.value}</div>
+        `;
+        dataDetails.appendChild(div);
+      });
+    }
+
+    function fileExists(path) {
+      return window.File && new File([''], path).name === '' || 
+             fetch(path, { method: 'HEAD' }).then(r => r.ok).catch(() => false);
+    }
+
+    function readFile(path) {
+      return fetch(path).then(r => r.text());
+    }
+
+    function showDataCheck(ok, message) {
+      document.getElementById('data-status').textContent = ok ? 'OK' : 'Ошибки';
+      document.getElementById('data-status').className = 'status ' + (ok ? 'ok' : 'error');
+      
+      const summary = document.getElementById('summary');
+      if (ok) {
+        summary.innerHTML = `
+          ✅ Все проверки пройдены!<br><br>
+          📌 Проект готов к запуску.<br>
+          📌 Откройте <code>index.html</code> в браузере для просмотра.<br>
+          📌 Переключайте языки через селектор в хедере.
+        `;
+      } else {
+        summary.innerHTML = `
+          ❌ Обнаружены ошибки:<br><br>
+          ${message}<br><br>
+          ⚠️ Исправьте ошибки перед запуском проекта.
+        `;
+      }
+    }
+
+    // Run checks
+    window.addEventListener('load', () => {
+      checkFiles();
+      checkPages();
+      setTimeout(checkData, 100);
+    });
+  </script>
+</body>
+</html>

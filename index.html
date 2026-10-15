@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlobalNews — Главная</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="brand"><div class="brand-mark">G</div><div class="brand-name"><span>Global</span>News</div></a>
+      <nav class="main-nav">
+        <a href="#hero" class="active" data-nav="nav.home">Главная</a>
+        <a href="#" data-nav="nav.latest">Свежее</a>
+      </nav>
+      <div class="header-tools">
+        <div class="lang-select"><span class="flag" id="lang-flag">🇷🇺</span><select id="language-selector"></select></div>
+      </div>
+    </div>
+  </header>
+  <nav class="mobile-nav"><div class="container"><a href="#hero" data-nav="nav.home" class="active">Главная</a><a href="#" data-nav="nav.latest">Свежее</a></div></nav>
+  <main id="app"></main>
+  <footer class="site-footer" id="site-footer">
+    <div class="footer-inner"><div class="footer-grid">
+      <div class="footer-brand"><div class="brand-mark">G</div><p>Мировые новости, подобранные для вас.</p></div>
+      <div class="footer-col"><h4>Рубрики</h4><a href="#categories">Политика</a><a href="#categories">Технологии</a><a href="#categories">Экономика</a></div>
+      <div class="footer-col"><h4>Язык</h4><button onclick="app.setLang('ru')">🇷🇺 Русский</button><button onclick="app.setLang('en')">🇬🇧 English</button><button onclick="app.setLang('es')">🇪🇸 Español</button></div>
+    </div><div class="footer-bottom"><span>© 2025 GlobalNews — Демо-проект.</span></div></div>
+  </footer>
+  <div class="toast" id="toast"></div>
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

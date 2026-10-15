@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-title="">GlobalNews — Статья</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="brand" onclick="event.preventDefault(); window.location.href='/';">
+        <div class="brand-mark">G</div>
+        <div class="brand-name"><span>Global</span>News</div>
+      </a>
+
+      <nav class="main-nav">
+        <a href="#hero" data-nav="nav.home">Главная</a>
+        <a href="/" data-nav="nav.latest">Свежее</a>
+        <a href="#all-news" data-nav="nav.all">Все новости</a>
+      </nav>
+
+      <div class="header-tools">
+        <div class="lang-select">
+          <span class="flag" id="lang-flag">🇷🇺</span>
+          <select id="language-selector" aria-label="Выберите язык"></select>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Navigation -->
+  <nav class="mobile-nav">
+    <div class="container">
+      <a href="#hero" data-nav="nav.home">Главная</a>
+      <a href="/" data-nav="nav.latest">Свежее</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main id="app">
+    <!-- Article content rendered dynamically -->
+    
+    <!-- Language Sidebar (shown on article pages) -->
+    <aside class="article-side" id="article-sidebar">
+      <div class="side-box">
+        <h3 data-section="common.articleLang">Читать на языке</h3>
+        <div class="side-lang" id="article-lang-options"></div>
+        
+        <div class="side-box" style="margin-top: 18px;">
+          <h3 data-section="common.share">Поделиться</h3>
+          <div class="share-row">
+            <button class="btn btn-ghost btn-sm" onclick="app.share('copy')">📋 Копировать ссылку</button>
+            <button class="btn btn-ghost btn-sm" onclick="app.share('twitter')">𝕏 Twitter</button>
+            <button class="btn btn-ghost btn-sm" onclick="app.share('linkedin')">💼 LinkedIn</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-box">
+        <h3 data-section="sections.related">Читать также</h3>
+        <div class="related-list" id="related-articles"></div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Footer (hidden on article pages) -->
+  <footer class="site-footer" id="article-footer">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-mark">G</div>
+          <p data-section="common.footerAbout">Мировые новости, подобранные и переведённые для вас.</p>
+        </div>
+        
+        <div class="footer-col">
+          <h4 data-section="common.footerCategories">Рубрики</h4>
+          <a href="#categories">Политика</a>
+          <a href="#categories">Технологии</a>
+          <a href="#categories">Экономика</a>
+        </div>
+        
+        <div class="footer-col">
+          <h4 data-section="common.footerLang">Язык</h4>
+          <button id="footer-lang-selector" onclick="app.toggleFooterLangSelector()">Русский</button>
+          <div id="footer-lang-options" style="display:none; position:absolute; top:100%; left:0; background:white; border:1px solid #e6e4df; border-radius:9px; padding:8px; margin-top:4px; min-width:150px; box-shadow:var(--shadow-2);">
+            <button onclick="app.setLang('ru')">🇷🇺 Русский</button>
+            <button onclick="app.setLang('en')">🇬🇧 English</button>
+            <button onclick="app.setLang('es')">🇪🇸 Español</button>
+            <button onclick="app.setLang('de')">🇩🇪 Deutsch</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span data-section="common.footerRights">Все права защищены. Демо-проект.</span>
+        <span class="langs">
+          <button onclick="app.setLang('ru')" id="fb-lang-ru">🇷🇺</button>
+          <button onclick="app.setLang('en')" id="fb-lang-en">🇬🇧</button>
+          <button onclick="app.setLang('es')" id="fb-lang-es">🇪🇸</button>
+          <button onclick="app.setLang('de')" id="fb-lang-de">🇩🇪</button>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
